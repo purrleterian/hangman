@@ -59,15 +59,35 @@ int main(int argc, char *argv[]) {
     }
 
     populateWordArray(words, fP);
-    // displayWords(words, fileLines);
-    while (1) {
-        displayRandomWord(words, fileLines);
+    Game currentGame;
+    initGame(&currentGame, words, fileLines);
+
+    while (!currentGame.hasWon) {
+        printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
+        printLines(&currentGame);
         getchar();
     }
 
     free(words);
     fclose(fP);
     return 0;
+}
+
+void printLines(const Game *g) {
+    for (int i = 0; i < g->wordSize; i++) {
+        printf("-");
+    }
+    printf("\n");
+}
+
+void initGame(Game *g, char **words, long fileLines) {
+    g->hasWon = 0;
+    strcpy(g->word, getRandomWord(words, fileLines));
+    g->wordSize = strlen(g->word);
+}
+
+void *getRandomWord(char **words, long fileLines) {
+    return words[rand() % fileLines];
 }
 
 void displayRandomWord(char **words, long fileLines) {
