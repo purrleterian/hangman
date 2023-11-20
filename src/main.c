@@ -27,7 +27,6 @@
 //
 //     - If the limbs variable reaches zero:
 //         - Break out of the loop
-int limbs = TOTAL_LIMBS;
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
@@ -62,10 +61,19 @@ int main(int argc, char *argv[]) {
     Game currentGame;
     initGame(&currentGame, words, fileLines);
 
-    while (!currentGame.hasWon) {
-        printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
+    char attempt = 0;
+    system("cls");
+    while (currentGame.limbs > 0) {
+        // printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
+        displayAttempted(&currentGame);
+        printf("Limbs remaining: %d\n", currentGame.limbs);
         printLines(&currentGame);
-        getchar();
+     
+        
+        scanf(" %c", &attempt);
+        clearInputStream();
+        submitAttempt(&currentGame, attempt);
+        system("cls"); 
     }
 
     free(words);
@@ -73,17 +81,78 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void printLines(const Game *g) {
-    for (int i = 0; i < g->wordSize; i++) {
-        printf("-");
+void clearInputStream() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        continue;
+    }
+}
+
+void displayAttempted(const Game *g) {
+    printf("Attempted Letters: ");
+    for (int i = 0; i < g->attemptsN; i++) {
+        printf("%c ", g->attempted[i]);
     }
     printf("\n");
 }
 
+void submitAttempt(Game *g, char attempt) {
+    int alreadyAttempted = 0;
+    if (attempt != '\n') {
+        for (int i = 0; i < g->attemptsN; i++) {
+            if (attempt == g->attempted[i]) {
+                alreadyAttempted = 1;
+            }
+        }
+
+        if (!alreadyAttempted) {
+            // If the attempt is correct
+            int correctAttempt = 0;
+            for (int i = 0; i < g->wordSize; i++) {
+                if (g->word[i] == attempt) {
+                    correctAttempt = 1;
+                }
+            }
+
+            g->attemptsN++;
+
+            g->attempted = realloc(g->attempted, g->attemptsN * sizeof(char) + 1);
+            g->attempted[g->attemptsN-1] = attempt;
+            if (correctAttempt == 0) {
+                g->limbs--;
+            }
+        }
+    }
+    
+}
+
+void printLines(const Game *g) {
+    int letterFound;
+    for (int i = 0; i < g->wordSize; i++) {
+        letterFound = 0;
+        for (int j = 0; j < g->attemptsN; j++) {
+            if (g->attempted[j] == g->word[i]) {
+                letterFound = 1;
+            }
+        }
+        if (letterFound == 0) {
+            printf("_");
+        } else {
+            printf("%c", g->word[i]);
+        }
+
+
+    }
+    printf("\n\n");
+}
+
 void initGame(Game *g, char **words, long fileLines) {
-    g->hasWon = 0;
     strcpy(g->word, getRandomWord(words, fileLines));
+    g->hasWon = 0;
     g->wordSize = strlen(g->word);
+    g->limbs = TOTAL_LIMBS;
+    g->attemptsN = 0;
+    g->attempted = (char *)malloc(sizeof(char));
 }
 
 void *getRandomWord(char **words, long fileLines) {

@@ -4,6 +4,10 @@
 typedef struct {
     int hasWon;
     int wordSize;
+    int limbs;
+
+    int attemptsN;
+    char *attempted;
     char word[];
 } Game;
 
@@ -14,3 +18,6 @@ void displayRandomWord(char **words, long fileLines);
 void *getRandomWord(char **words, long fileLines);
 void initGame(Game *g, char **words, long fileLines);
 void printLines(const Game *g);
+void submitAttempt(Game *g, char attempt);
+void clearInputStream();
+void displayAttempted(const Game *g);
