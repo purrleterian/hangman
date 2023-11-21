@@ -4,8 +4,8 @@
 
 // TODO: Refactor, separate into different files
 
-int main(int argc, char *argv[]) {
-    char filename[] = "./data/substantivos_portugues.txt";
+int main(int argc, char **argv) {
+    char filename[] = "./data/nounlist.txt";
     FILE *fP = fopen(filename, "r");
     if (fP == NULL) {
         printf("Failed to open text file [%s]\n", filename);
