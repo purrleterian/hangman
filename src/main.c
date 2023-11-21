@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     char attempt;
     system("cls");
     while (currentGame.limbs > 0 && currentGame.hasWon == 0) {
-        printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
+        // printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
         displayAttempted(&currentGame);
         printf("Limbs remaining: %d\n", currentGame.limbs);
         printLines(&currentGame);
