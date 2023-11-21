@@ -5,9 +5,6 @@
 // TODO: Refactor, separate into different files
 
 int main(int argc, char *argv[]) {
-    srand(time(NULL));
-    rand();
-
     char filename[] = "./data/nounlist.txt";
     FILE *fP = fopen(filename, "r");
     if (fP == NULL) {
@@ -57,10 +54,11 @@ int main(int argc, char *argv[]) {
 
 void displayAttempted(const Game *g) {
     printf("Attempted Letters: ");
+    printf("[ ");
     for (int i = 0; i < g->attemptsN; i++) {
         printf("%c ", g->attempted[i]);
     }
-    printf("\n");
+    printf("]\n");
 }
 
 void submitAttempt(Game *g, char attempt) {
@@ -111,6 +109,9 @@ void printLines(const Game *g) {
 }
 
 void initGame(Game *g, char **words, long fileLines) {
+    srand(time(NULL));
+    rand();
+
     strcpy(g->word, getRandomWord(words, fileLines));
     g->hasWon = 0;
     g->wordSize = strlen(g->word);
