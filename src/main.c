@@ -36,16 +36,25 @@ int main(int argc, char *argv[]) {
 
     char attempt;
     system("cls");
-    while (currentGame.limbs > 0) {
-        // printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
+    while (currentGame.limbs > 0 && currentGame.hasWon == 0) {
+        printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
         displayAttempted(&currentGame);
         printf("Limbs remaining: %d\n", currentGame.limbs);
         printLines(&currentGame);
 
         scanf(" %c", &attempt);
         submitAttempt(&currentGame, attempt);
+        if (currentGame.lettersFound == currentGame.wordSize) {
+            currentGame.hasWon = 1;
+        }
         system("cls");
     }
+    if (currentGame.hasWon) {
+        printf("Correct.");
+    } else {
+        printf("You ran out of attempts.");
+    }
+    printf(" The answer was '%s'", currentGame.word);
 
     free(words);
     fclose(fP);
@@ -75,9 +84,12 @@ void submitAttempt(Game *g, char attempt) {
             for (int i = 0; i < g->wordSize; i++) {
                 if (g->word[i] == attempt) {
                     correctAttempt = 1;
+                    g->lettersFound++;
                 }
             }
 
+            // This variable is just so I can track the size of the pointer to
+            // re-allocate
             g->attemptsN++;
 
             g->attempted = realloc(g->attempted, g->attemptsN * sizeof(char));
@@ -116,6 +128,7 @@ void initGame(Game *g, char **words, long fileLines) {
     g->hasWon = 0;
     g->wordSize = strlen(g->word);
     g->limbs = TOTAL_LIMBS;
+    g->lettersFound = 0;
     g->attemptsN = 0;
     g->attempted = (char *)malloc(sizeof(char));
 }
