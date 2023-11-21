@@ -2,31 +2,7 @@
 
 #include "includes.h"
 
-// Making Hangman
-// Steps:
-// - Make a function that allocates memory for an array of nouns (2D array of
-// Chars)
-// - Store that array in heap
-// - Randomly select a word from that array
-// - Create a loop that checks if the user has won the game. If they do, break
-// out of the loop
-// - While in the loop:
-//     - Print underscores equal to the length of the word
-//     - Prompt the user for a letter
-//     - Check if that letter is part of the array of chars of the chosen word
-//     - If the letter is present in the word:
-//         - Replace the corresponding underscores with the instances of that
-//         letter
-//         - Resume the loop
-//     - If the letter is NOT present in the word:
-//         - Subtract from the limbs(?) count
-//
-//     - If all letters are found:
-//         - Won = True
-//         - Break out of the loop
-//
-//     - If the limbs variable reaches zero:
-//         - Break out of the loop
+// TODO: Refactor, separate into different files
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
@@ -46,7 +22,7 @@ int main(int argc, char *argv[]) {
     // Alocate a string of character pointers the size of however many lines of
     // words in the file
     words = malloc(fileLines * sizeof(char *));
-    size_t tempSize = 32;
+    size_t tempSize = 64;
     for (int i = 0; i < fileLines; i++) {
         // For every one of the pointers, allocate a certain size for the word
         words[i] = malloc(tempSize * sizeof(char));
@@ -57,35 +33,26 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    populateWordArray(words, fP);
     Game currentGame;
+    populateWordArray(words, fP);
     initGame(&currentGame, words, fileLines);
 
-    char attempt = 0;
+    char attempt;
     system("cls");
     while (currentGame.limbs > 0) {
         // printf("%s (%d)\n", currentGame.word, currentGame.wordSize);
         displayAttempted(&currentGame);
         printf("Limbs remaining: %d\n", currentGame.limbs);
         printLines(&currentGame);
-     
-        
+
         scanf(" %c", &attempt);
-        clearInputStream();
         submitAttempt(&currentGame, attempt);
-        system("cls"); 
+        system("cls");
     }
 
     free(words);
     fclose(fP);
     return 0;
-}
-
-void clearInputStream() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF) {
-        continue;
-    }
 }
 
 void displayAttempted(const Game *g) {
@@ -98,7 +65,7 @@ void displayAttempted(const Game *g) {
 
 void submitAttempt(Game *g, char attempt) {
     int alreadyAttempted = 0;
-    if (attempt != '\n') {
+    if (attempt != '\n' && attempt != EOF) {
         for (int i = 0; i < g->attemptsN; i++) {
             if (attempt == g->attempted[i]) {
                 alreadyAttempted = 1;
@@ -106,7 +73,6 @@ void submitAttempt(Game *g, char attempt) {
         }
 
         if (!alreadyAttempted) {
-            // If the attempt is correct
             int correctAttempt = 0;
             for (int i = 0; i < g->wordSize; i++) {
                 if (g->word[i] == attempt) {
@@ -116,14 +82,14 @@ void submitAttempt(Game *g, char attempt) {
 
             g->attemptsN++;
 
-            g->attempted = realloc(g->attempted, g->attemptsN * sizeof(char) + 1);
-            g->attempted[g->attemptsN-1] = attempt;
+            g->attempted = realloc(g->attempted, g->attemptsN * sizeof(char));
+            g->attempted[g->attemptsN - 1] = attempt;
+
             if (correctAttempt == 0) {
                 g->limbs--;
             }
         }
     }
-    
 }
 
 void printLines(const Game *g) {
@@ -140,8 +106,6 @@ void printLines(const Game *g) {
         } else {
             printf("%c", g->word[i]);
         }
-
-
     }
     printf("\n\n");
 }
@@ -157,18 +121,6 @@ void initGame(Game *g, char **words, long fileLines) {
 
 void *getRandomWord(char **words, long fileLines) {
     return words[rand() % fileLines];
-}
-
-void displayRandomWord(char **words, long fileLines) {
-    char *word = words[rand() % fileLines];
-    int wordSize = strlen(word);
-    printf("%s (%d)", word, wordSize);
-}
-
-void displayWords(char **words, long fileLines) {
-    for (int i = 0; i < fileLines; i++) {
-        printf("[%d] %s\n", i + 1, words[i]);
-    }
 }
 
 void populateWordArray(char **words, FILE *fP) {
