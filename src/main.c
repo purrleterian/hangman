@@ -139,7 +139,7 @@ void initGame(Game *g, char **words, long fileLines) {
     g->attempted = (char *)malloc(sizeof(char));
 }
 
-void *getRandomWord(char **words, long fileLines) {
+char *getRandomWord(char **words, long fileLines) {
     return words[rand() % fileLines];
 }
 
