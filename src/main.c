@@ -43,6 +43,12 @@ int main(int argc, char *argv[]) {
         printLines(&currentGame);
 
         scanf(" %c", &attempt);
+        // Clear input stream, a bit confusing ngl
+        int c;
+        // EOF in this case checks for an empty stream
+        while ((c = getchar()) != '\n' && c != EOF) {
+            continue;
+        }
         submitAttempt(&currentGame, attempt);
         if (currentGame.lettersFound == currentGame.wordSize) {
             currentGame.hasWon = 1;
