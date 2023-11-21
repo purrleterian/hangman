@@ -5,7 +5,7 @@
 // TODO: Refactor, separate into different files
 
 int main(int argc, char *argv[]) {
-    char filename[] = "./data/nounlist.txt";
+    char filename[] = "./data/substantivos_portugues.txt";
     FILE *fP = fopen(filename, "r");
     if (fP == NULL) {
         printf("Failed to open text file [%s]\n", filename);
@@ -145,7 +145,7 @@ char *getRandomWord(char **words, long fileLines) {
 
 void populateWordArray(char **words, FILE *fP) {
     long i = 0;
-    char buffer[32];
+    char buffer[64];
 
     // fgets returns null on the last line, so 'i' will end up the same as
     // fileLines
