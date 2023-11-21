@@ -14,7 +14,7 @@ typedef struct {
 
 long getFileSize(FILE *fP);
 void populateWordArray(char **words, FILE *fP);
-void *getRandomWord(char **words, long fileLines);
+char *getRandomWord(char **words, long fileLines);
 void initGame(Game *g, char **words, long fileLines);
 void printLines(const Game *g);
 void submitAttempt(Game *g, char attempt);
