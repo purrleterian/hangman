@@ -21,7 +21,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 run:
-	./$(TARGET).exe
+	./$(TARGET)
 
 clean:
 	-rm -f $(SOURCEDIR)*.o
